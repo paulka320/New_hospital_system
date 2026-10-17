@@ -1,0 +1,8 @@
+{
+  "name": "Hospital Management System",
+  "description": "Comprehensive healthcare and hospital management system featuring patient records, doctor scheduling, appointments, clinical visits, laboratory tests, billing, and notifications.",
+  "version": "1.0.0",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
