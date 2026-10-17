@@ -3,8 +3,8 @@ export type UserRole =
   | 'doctor'
   | 'receptionist'
   | 'lab_technician'
-  | 'accountant'
-  | 'patient';
+  | 'pharmacist'
+  | 'accountant';
 
 export interface UserProfile {
   id: string;
@@ -17,7 +17,6 @@ export interface UserProfile {
   phoneNumber?: string;
   bio?: string;
   doctorId?: string; // If role is doctor
-  patientId?: string; // If role is patient
 }
 
 export type Gender = 'M' | 'F' | 'O';
@@ -97,16 +96,30 @@ export type AppointmentType =
   | 'follow_up'
   | 'surgery'
   | 'emergency'
-  | 'routine_check';
+  | 'routine_check'
+  | 'laboratory'
+  | 'pharmacy';
+
+export type AppointmentTargetRole = 'doctor' | 'lab_technician' | 'pharmacist';
 
 export interface Appointment {
   id: string;
   patientId: string;
-  doctorId: string;
+  doctorId: string; // or target staff id
+  targetRole: AppointmentTargetRole;
+  targetPersonnelName?: string;
   date: string;
   time: string;
   appointmentType: AppointmentType;
   status: AppointmentStatus;
+  
+  // Accept / Decline workflow
+  responseStatus: 'pending' | 'accepted' | 'declined';
+  declineReason?: string;
+  declinedBy?: string;
+  declinedAt?: string;
+  acceptedAt?: string;
+
   reason?: string;
   notes?: string;
   cancelledReason?: string;
@@ -171,6 +184,10 @@ export interface LaboratoryTest {
   completed: boolean;
   completedDate?: string;
   technicianNotes?: string;
+  cost: number;
+  responseStatus: 'pending' | 'accepted' | 'declined';
+  declineReason?: string;
+  performedBy?: string;
   createdAt: string;
 }
 
@@ -183,20 +200,39 @@ export interface Prescription {
   patientId: string;
   doctorId?: string;
   medicineName: string;
+  drugId?: string;
   dosage: number;
   dosageUnit: DosageUnit;
   frequency: string;
   durationDays: number;
   instructions?: string;
   status: PrescriptionStatus;
+  cost: number;
+  responseStatus: 'pending' | 'accepted' | 'declined';
+  declineReason?: string;
+  dispensedBy?: string;
   createdAt: string;
   filledAt?: string;
   endDate?: string;
 }
 
+export interface PharmacyDrug {
+  id: string;
+  name: string;
+  genericName: string;
+  category: string;
+  dosageForm: string;
+  strength: string;
+  stockQuantity: number;
+  reorderLevel: number;
+  unitPrice: number;
+  expiryDate: string;
+  manufacturer: string;
+}
+
 export type BillStatus = 'draft' | 'issued' | 'paid' | 'overdue' | 'cancelled';
 export type PaymentMethod = 'cash' | 'card' | 'check' | 'online' | 'insurance';
-export type BillItemType = 'consultation' | 'procedure' | 'medicine' | 'lab_test' | 'room_charge' | 'other';
+export type BillItemType = 'consultation' | 'procedure' | 'medicine' | 'lab_test' | 'room_charge' | 'registration' | 'other';
 
 export interface BillItem {
   id: string;
@@ -241,17 +277,25 @@ export interface Payment {
 
 export type NotificationType =
   | 'appointment_reminder'
+  | 'appointment_received'
   | 'appointment_confirmed'
+  | 'appointment_declined'
   | 'appointment_cancelled'
+  | 'lab_test_ordered'
   | 'lab_result_ready'
+  | 'lab_declined'
+  | 'prescription_ordered'
   | 'prescription_filled'
+  | 'prescription_declined'
   | 'bill_issued'
   | 'payment_received'
+  | 'checkout_ready'
   | 'general';
 
 export interface Notification {
   id: string;
   userId: string;
+  targetRole?: UserRole;
   notificationType: NotificationType;
   title: string;
   message: string;
@@ -270,4 +314,24 @@ export interface NotificationPreference {
   labResults: boolean;
   billingAlerts: boolean;
   prescriptionAlerts: boolean;
+}
+
+export type PatientJourneyStage =
+  | 'reception_intake'
+  | 'doctor_consultation'
+  | 'lab_testing'
+  | 'pharmacy_dispensation'
+  | 'reception_checkout'
+  | 'discharged';
+
+export interface PatientJourney {
+  patientId: string;
+  currentStage: PatientJourneyStage;
+  consultationFee: number;
+  labFee: number;
+  medicationFee: number;
+  registrationFee: number;
+  totalJourneyCost: number;
+  isPaid: boolean;
+  dischargedAt?: string;
 }

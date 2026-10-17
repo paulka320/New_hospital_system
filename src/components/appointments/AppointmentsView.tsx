@@ -48,6 +48,7 @@ export const AppointmentsView: React.FC = () => {
   const [formData, setFormData] = useState({
     patientId: patients[0]?.id || '',
     doctorId: doctors[0]?.id || '',
+    targetRole: 'doctor' as const,
     date: '2026-10-17',
     time: '09:00',
     appointmentType: 'consultation' as AppointmentType,
@@ -64,6 +65,7 @@ export const AppointmentsView: React.FC = () => {
     setFormData({
       patientId: patients[0]?.id || '',
       doctorId: doctors[0]?.id || '',
+      targetRole: 'doctor',
       date: '2026-10-17',
       time: '09:00',
       appointmentType: 'consultation',

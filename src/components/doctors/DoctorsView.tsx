@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   XCircle,
   X,
+  AlertCircle,
+  ShieldAlert,
 } from 'lucide-react';
 import { Doctor, Gender } from '../../types';
 import { useHospital } from '../../context/HospitalContext';
@@ -28,6 +30,7 @@ export const DoctorsView: React.FC = () => {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
+  const [doctorToDelete, setDoctorToDelete] = useState<Doctor | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -217,13 +220,13 @@ export const DoctorsView: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between text-slate-600">
                   <span>Consultation Fee:</span>
-                  <span className="font-bold text-slate-900">${doc.consultationFee.toFixed(2)}</span>
+                  <span className="font-bold text-slate-900">${(doc.consultationFee ?? 0).toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between text-slate-600">
                   <span>Rating:</span>
                   <span className="font-bold text-amber-600 flex items-center gap-1">
                     <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                    {doc.averageRating.toFixed(1)} / 5.0
+                    {(doc.averageRating ?? 5.0).toFixed(1)} / 5.0
                   </span>
                 </div>
               </div>
@@ -240,11 +243,7 @@ export const DoctorsView: React.FC = () => {
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => {
-                    if (window.confirm(`Remove Dr. ${doc.name} from directory?`)) {
-                      deleteDoctor(doc.id);
-                    }
-                  }}
+                  onClick={() => setDoctorToDelete(doc)}
                   className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-slate-100"
                   title="Delete doctor"
                 >
@@ -408,6 +407,57 @@ export const DoctorsView: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Remove Doctor Confirmation Modal */}
+      {doctorToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-slate-900">
+                Remove Physician from Roster?
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Are you sure you want to remove <strong>Dr. {doctorToDelete.name}</strong> ({doctorToDelete.specialization})?
+              </p>
+            </div>
+
+            <div className="my-5 p-4 bg-red-50/60 rounded-2xl border border-red-100 text-xs text-red-900 space-y-1.5">
+              <p className="font-semibold flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                This action immediately:
+              </p>
+              <ul className="list-disc list-inside text-[11px] text-red-800/90 space-y-1 pl-1">
+                <li>Removes the doctor from the appointment booking directory.</li>
+                <li>Revokes their doctor portal and clinical login access.</li>
+              </ul>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setDoctorToDelete(null)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  deleteDoctor(doctorToDelete.id);
+                  setDoctorToDelete(null);
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20"
+              >
+                Yes, Remove Doctor
+              </button>
+            </div>
           </div>
         </div>
       )}

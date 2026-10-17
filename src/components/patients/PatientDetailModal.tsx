@@ -43,7 +43,7 @@ export const PatientDetailModal: React.FC<PatientDetailModalProps> = ({
     addLabTest,
     prescriptions,
     addPrescription,
-    markPrescriptionFilled,
+    dispensePrescription,
     bills,
     addBill,
   } = useHospital();
@@ -739,10 +739,10 @@ export const PatientDetailModal: React.FC<PatientDetailModalProps> = ({
                         </span>
                         {rx.status === 'active' && (
                           <button
-                            onClick={() => markPrescriptionFilled(rx.id)}
+                            onClick={() => dispensePrescription(rx.id)}
                             className="px-2.5 py-1 text-xs rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium"
                           >
-                            Mark Filled
+                            Dispense / Fill
                           </button>
                         )}
                       </div>

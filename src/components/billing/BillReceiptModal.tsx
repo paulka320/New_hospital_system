@@ -123,9 +123,9 @@ export const BillReceiptModal: React.FC<BillReceiptModalProps> = ({ bill, onClos
                     <td className="p-3 font-semibold text-slate-900">{item.description}</td>
                     <td className="p-3 capitalize text-slate-600">{item.itemType.replace('_', ' ')}</td>
                     <td className="p-3 text-center font-mono">{item.quantity}</td>
-                    <td className="p-3 text-right font-mono">${item.unitPrice.toFixed(2)}</td>
+                    <td className="p-3 text-right font-mono">${(item.unitPrice ?? 0).toFixed(2)}</td>
                     <td className="p-3 text-right font-mono font-bold text-slate-900">
-                      ${(item.quantity * item.unitPrice).toFixed(2)}
+                      ${((item.quantity || 1) * (item.unitPrice ?? 0)).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -138,30 +138,30 @@ export const BillReceiptModal: React.FC<BillReceiptModalProps> = ({ bill, onClos
             <div className="w-72 space-y-2 border-t border-slate-200 pt-3">
               <div className="flex justify-between text-slate-600">
                 <span>Subtotal:</span>
-                <span className="font-mono font-semibold">${bill.subtotal.toFixed(2)}</span>
+                <span className="font-mono font-semibold">${(bill.subtotal ?? 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Tax / Regulatory Fee:</span>
-                <span className="font-mono">+${bill.tax.toFixed(2)}</span>
+                <span className="font-mono">+${(bill.tax ?? 0).toFixed(2)}</span>
               </div>
-              {bill.discount > 0 && (
+              {(bill.discount ?? 0) > 0 && (
                 <div className="flex justify-between text-emerald-600 font-medium">
                   <span>Insurance / Discount:</span>
-                  <span className="font-mono">-${bill.discount.toFixed(2)}</span>
+                  <span className="font-mono">-${(bill.discount ?? 0).toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-300">
                 <span>Total Amount:</span>
-                <span className="font-mono text-indigo-700">${bill.totalAmount.toFixed(2)}</span>
+                <span className="font-mono text-indigo-700">${(bill.totalAmount ?? 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-700 font-semibold">
                 <span>Amount Paid:</span>
-                <span className="font-mono text-emerald-600">${bill.paidAmount.toFixed(2)}</span>
+                <span className="font-mono text-emerald-600">${(bill.paidAmount ?? 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold pt-1 border-t border-slate-200">
                 <span>Balance Due:</span>
-                <span className={`font-mono ${balanceDue > 0 ? 'text-red-600' : 'text-slate-500'}`}>
-                  ${balanceDue.toFixed(2)}
+                <span className={`font-mono ${(balanceDue ?? 0) > 0 ? 'text-red-600' : 'text-slate-500'}`}>
+                  ${(balanceDue ?? 0).toFixed(2)}
                 </span>
               </div>
             </div>
